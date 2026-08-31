@@ -1,6 +1,6 @@
-﻿{
+{
     "version":  "3.0",
-    "model":  "qwen2.5-coder-1.5b-instruct",
+    "model":  "qwen/qwen2.5-coder-14b",
     "backupBeforeEdit":  true,
     "allowedOperations":  [
                               "read",
