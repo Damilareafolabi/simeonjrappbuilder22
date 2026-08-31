@@ -1,0 +1,26 @@
+﻿{
+  "id": "2.1",
+  "name": "Build From Scratch",
+  "status": "implemented",
+  "type": "factory-engine",
+  "description": "Convert a natural-language application request into a generated project using the existing APMAZON build pipeline.",
+  "requirements": [
+    "Accept natural-language application prompt",
+    "Send prompt to existing local AI build endpoint",
+    "Receive generated application files",
+    "Verify generated file list",
+    "Verify production build",
+    "Prepare live preview",
+    "Persist generated project state",
+    "Never mark PASS without verification"
+  ],
+  "endpoint": "http://127.0.0.1:8787/api/ai/build",
+  "verification": {
+    "requiresBuild": true,
+    "requiresTests": true,
+    "requiresExpectedOutput": true,
+    "requiresPreview": true,
+    "requiresStateConsistency": true
+  },
+  "maxRepairAttempts": 3
+}

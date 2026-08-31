@@ -1,0 +1,12 @@
+﻿{
+    "created":  "2026-08-29T19:12:53.9095999+01:00",
+    "project":  "real-project-001",
+    "autoResume":  true,
+    "phase":  "2.4C",
+    "contextLimit":  4096,
+    "safePromptBudget":  2600,
+    "model":  "qwen2.5-coder-1.5b-instruct",
+    "rollbackOnBuildFailure":  true,
+    "status":  "PAUSED_FOR_SAFE_CONTEXT_PATCH",
+    "backupBeforeTransform":  true
+}

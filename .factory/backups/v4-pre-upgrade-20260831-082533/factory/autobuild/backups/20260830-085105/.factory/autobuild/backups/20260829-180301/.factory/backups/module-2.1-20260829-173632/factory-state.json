@@ -1,0 +1,33 @@
+﻿{
+    "status":  "active",
+    "currentPhase":  1,
+    "currentModule":  "1.7",
+    "progress":  5,
+    "lastResult":  "PASS",
+    "lastVerified":  "2026-08-29T17:31:14.5817099+01:00",
+    "failureCount":  1,
+    "completedModules":  [
+                             "0.1",
+                             "0.2",
+                             "0.3",
+                             "0.4",
+                             "0.5",
+                             "0.6",
+                             "0.7",
+                             "0.8",
+                             "1.1",
+                             "1.2",
+                             "1.3",
+                             "1.4",
+                             "1.5",
+                             "1.6"
+                         ],
+    "rules":  {
+                  "backupBeforeModule":  true,
+                  "buildBeforePass":  true,
+                  "testBeforePass":  true,
+                  "stopOnFailure":  true,
+                  "rollbackOnFailure":  true,
+                  "neverSkipVerification":  true
+              }
+}

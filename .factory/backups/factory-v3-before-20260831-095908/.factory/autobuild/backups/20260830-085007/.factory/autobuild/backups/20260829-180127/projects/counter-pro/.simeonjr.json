@@ -1,0 +1,8 @@
+{
+  "name": "Counter Pro",
+  "slug": "counter-pro",
+  "prompt": "Create a polished modern React counter application. Include a large counter display, increment + button, decrement - button, Reset button, clean card layout, responsive design, and subtle animations. Generate a complete Vite React project.",
+  "model": "qwen2.5-coder-1.5b-instruct",
+  "createdAt": "2026-08-29T14:45:18.795Z",
+  "status": "generated"
+}

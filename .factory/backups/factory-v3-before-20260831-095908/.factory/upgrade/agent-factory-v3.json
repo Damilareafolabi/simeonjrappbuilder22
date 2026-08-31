@@ -1,0 +1,47 @@
+﻿{
+    "agentEndpoint":  "http://127.0.0.1:8787",
+    "version":  "3.0",
+    "safety":  [
+                   "backup before mutation",
+                   "never modify protected .factory files",
+                   "never modify node_modules",
+                   "build must pass before completion",
+                   "rollback failed changes",
+                   "respect open-source licenses",
+                   "require approval for destructive or external publishing actions"
+               ],
+    "modes":  [
+                  "plan",
+                  "inspect",
+                  "generate",
+                  "edit",
+                  "build",
+                  "test",
+                  "repair",
+                  "verify",
+                  "iterate"
+              ],
+    "name":  "SimeonJr Universal AI Coding Agent Factory",
+    "capabilities":  [
+                         "autonomous task planning",
+                         "workspace inspection",
+                         "safe file editing",
+                         "project scaffolding",
+                         "React/Vite UI generation",
+                         "responsive phone tablet laptop desktop design",
+                         "backend/API generation",
+                         "database integration",
+                         "GitHub integration",
+                         "open-source license checking",
+                         "npm build/test execution",
+                         "automatic error diagnosis",
+                         "automatic repair with rollback",
+                         "project backups",
+                         "multi-project workspaces",
+                         "web app packaging",
+                         "desktop app preparation",
+                         "mobile app preparation"
+                     ],
+    "modelEndpoint":  "http://127.0.0.1:1234/v1",
+    "preferredModel":  "qwen2.5-coder-1.5b-instruct"
+}

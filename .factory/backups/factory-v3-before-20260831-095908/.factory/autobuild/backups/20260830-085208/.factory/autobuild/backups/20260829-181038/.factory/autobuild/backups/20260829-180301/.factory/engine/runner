@@ -1,0 +1,17 @@
+﻿{
+  "module": "1.3",
+  "name": "Task Runner",
+  "version": "1.0",
+  "status": "ready",
+  "rules": {
+    "executeOneTaskAtATime": true,
+    "checkDependencies": true,
+    "persistBeforeExecution": true,
+    "verifyAfterExecution": true,
+    "stopOnFailure": true,
+    "rollbackOnFailure": true,
+    "neverSkipVerification": true
+  },
+  "queue": ".factory/engine/tasks/task-queue.json",
+  "runState": ".factory/engine/runs/current-run.json"
+}

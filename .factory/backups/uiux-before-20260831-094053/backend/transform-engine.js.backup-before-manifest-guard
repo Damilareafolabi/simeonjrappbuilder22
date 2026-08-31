@@ -1,0 +1,876 @@
+﻿import fs from "fs";
+import path from "path";
+import { exec } from "child_process";
+
+const WORKSPACE = path.resolve(process.cwd());
+
+const PROTECTED_ROOTS = [
+  ".factory",
+  "node_modules",
+  "dist",
+  ".git",
+  "generated",
+  "projects"
+];
+
+const MAX_FILE_SIZE = 512 * 1024;
+const MAX_FILES = 300;
+
+function normalize(value) {
+  return String(value || "")
+    .replace(/\\/g, "/")
+    .replace(/^\/+/, "");
+}
+
+function isProtected(file) {
+  const p = normalize(file);
+
+  return PROTECTED_ROOTS.some(
+    root => p === root || p.startsWith(root + "/")
+  );
+}
+
+function safePath(root, relative) {
+  const target = path.resolve(root, relative);
+
+  if (
+    target !== root &&
+    !target.startsWith(root + path.sep)
+  ) {
+    throw new Error("Path outside project rejected");
+  }
+
+  return target;
+}
+
+function discoverFiles(root) {
+  const results = [];
+
+  function walk(dir) {
+    if (results.length >= MAX_FILES) return;
+
+    if (!fs.existsSync(dir)) return;
+
+    for (const entry of fs.readdirSync(dir, {
+      withFileTypes: true
+    })) {
+      if (
+        entry.name === "node_modules" ||
+        entry.name === ".git" ||
+        entry.name === "dist" ||
+        entry.name === ".factory"
+      ) {
+        continue;
+      }
+
+      const full = path.join(dir, entry.name);
+
+      if (entry.isDirectory()) {
+        walk(full);
+        continue;
+      }
+
+      const relative = normalize(
+        path.relative(root, full)
+      );
+
+      if (isProtected(relative)) continue;
+
+      try {
+        const stat = fs.statSync(full);
+
+        if (stat.size > MAX_FILE_SIZE) continue;
+
+        results.push(relative);
+      } catch {
+        continue;
+      }
+    }
+  }
+
+  walk(root);
+
+  return results;
+}
+
+function readProject(root) {
+  const files = discoverFiles(root);
+  const source = {};
+
+  for (const file of files) {
+    try {
+      source[file] = fs.readFileSync(
+        safePath(root, file),
+        "utf8"
+      );
+    } catch {
+      // Ignore binary/unreadable files.
+    }
+  }
+
+  return {
+    files,
+    source
+  };
+}
+
+function parseFiles(text, allowedFiles) {
+  const result = {};
+  const raw = String(text || "").trim();
+
+  const isAllowed = file => {
+    const normalized = normalize(file);
+
+    if (!normalized) return false;
+    if (isProtected(normalized)) return false;
+
+    if (
+      allowedFiles &&
+      allowedFiles.length &&
+      !allowedFiles.includes(normalized)
+    ) {
+      return false;
+    }
+
+    return true;
+  };
+
+  /*
+   * FORMAT 1:
+   *
+   * ===FILE: path/to/file===
+   * complete contents
+   */
+  const regex =
+    /===FILE:\s*([^\r\n=]+?)===\r?\n([\s\S]*?)(?=\r?\n===FILE:|$)/g;
+
+  let match;
+
+  while ((match = regex.exec(raw)) !== null) {
+    const file = normalize(match[1].trim());
+
+    if (!isAllowed(file)) continue;
+
+    result[file] = match[2]
+      .replace(/^```[a-zA-Z0-9_-]*\s*/i, "")
+      .replace(/\s*```$/i, "")
+      .trim();
+  }
+
+  if (Object.keys(result).length) {
+    return result;
+  }
+
+  /*
+   * FORMAT 2:
+   *
+   * {
+   *   "file.js": {
+   *     "content": "..."
+   *   }
+   * }
+   *
+   * Some local coding models naturally return structured JSON.
+   */
+  try {
+    let jsonText = raw;
+
+    jsonText = jsonText
+      .replace(/^```json\s*/i, "")
+      .replace(/^```\s*/i, "")
+      .replace(/\s*```$/i, "")
+      .trim();
+
+    const parsed = JSON.parse(jsonText);
+
+    if (
+      parsed &&
+      typeof parsed === "object" &&
+      !Array.isArray(parsed)
+    ) {
+      for (const [fileName, value] of Object.entries(parsed)) {
+        const file = normalize(fileName);
+
+        if (!isAllowed(file)) continue;
+
+        if (
+          typeof value === "string"
+        ) {
+          result[file] = value.trim();
+          continue;
+        }
+
+        if (
+          value &&
+          typeof value === "object" &&
+          typeof value.content === "string"
+        ) {
+          result[file] = value.content.trim();
+        }
+      }
+    }
+  } catch {
+    // Not JSON. The FILE format above is the fallback.
+  }
+
+  return result;
+}
+
+function backupProject(root, files) {
+  const stamp = new Date()
+    .toISOString()
+    .replace(/[-:TZ.]/g, "")
+    .slice(0, 14);
+
+  const backupRoot = path.join(
+    WORKSPACE,
+    ".factory",
+    "backups",
+    "projects",
+    stamp
+  );
+
+  fs.mkdirSync(backupRoot, {
+    recursive: true
+  });
+
+  for (const file of files) {
+    if (isProtected(file)) continue;
+
+    const source = safePath(root, file);
+
+    if (!fs.existsSync(source)) continue;
+
+    const destination = path.join(
+      backupRoot,
+      file
+    );
+
+    fs.mkdirSync(
+      path.dirname(destination),
+      { recursive: true }
+    );
+
+    fs.copyFileSync(source, destination);
+  }
+
+  fs.writeFileSync(
+    path.join(backupRoot, "manifest.json"),
+    JSON.stringify(
+      {
+        phase: "2.4B",
+        projectRoot: root,
+        files
+      },
+      null,
+      2
+    )
+  );
+
+  return backupRoot;
+}
+
+function rollbackProject(root, backupRoot, files) {
+  for (const file of files) {
+    if (isProtected(file)) continue;
+
+    const source = path.join(
+      backupRoot,
+      file
+    );
+
+    const destination = safePath(
+      root,
+      file
+    );
+
+    if (!fs.existsSync(source)) continue;
+
+    fs.mkdirSync(
+      path.dirname(destination),
+      { recursive: true }
+    );
+
+    fs.copyFileSync(
+      source,
+      destination
+    );
+  }
+}
+
+function runCommand(command, cwd, timeout = 180000) {
+  return new Promise(resolve => {
+    exec(
+      command,
+      {
+        cwd,
+        windowsHide: true,
+        maxBuffer: 30 * 1024 * 1024,
+        timeout
+      },
+      (error, stdout, stderr) => {
+        resolve({
+          success: !error,
+          exitCode: error?.code ?? 0,
+          stdout: stdout || "",
+          stderr: stderr || ""
+        });
+      }
+    );
+  });
+}
+
+async function buildProject(root) {
+  const packageJson = path.join(
+    root,
+    "package.json"
+  );
+
+  if (!fs.existsSync(packageJson)) {
+    return {
+      success: false,
+      reason: "No package.json found",
+      stdout: "",
+      stderr: ""
+    };
+  }
+
+  let packageData;
+
+  try {
+    packageData = JSON.parse(
+      fs.readFileSync(packageJson, "utf8")
+    );
+  } catch {
+    return {
+      success: false,
+      reason: "Invalid package.json",
+      stdout: "",
+      stderr: ""
+    };
+  }
+
+  if (
+    packageData.scripts &&
+    packageData.scripts.build
+  ) {
+    const install = await runCommand(
+      process.platform === "win32"
+        ? "npm.cmd install"
+        : "npm install",
+      root,
+      300000
+    );
+
+    if (!install.success) {
+      return {
+        success: false,
+        stage: "npm_install",
+        ...install
+      };
+    }
+
+    return await runCommand(
+      process.platform === "win32"
+        ? "npm.cmd run build"
+        : "npm run build",
+      root,
+      300000
+    );
+  }
+
+  return {
+    success: true,
+    stage: "no-build-script"
+  };
+}
+
+export function getTransformClassification() {
+  return {
+    phase: "2.4B",
+    mode: "isolated-project-transform",
+    protectedRoots: PROTECTED_ROOTS,
+    maxFiles: MAX_FILES,
+    maxFileSize: MAX_FILE_SIZE
+  };
+}
+
+export async function transformProject({
+  projectRoot,
+  prompt,
+  lmChat
+}) {
+  if (!projectRoot) {
+    throw new Error("projectRoot is required");
+  }
+
+  if (!prompt || typeof prompt !== "string") {
+    throw new Error("Transformation prompt is required");
+  }
+
+  const root = path.resolve(projectRoot);
+
+  if (
+    root === WORKSPACE ||
+    root.startsWith(WORKSPACE + path.sep + "src") ||
+    root.startsWith(WORKSPACE + path.sep + "backend")
+  ) {
+    throw new Error(
+      "Factory source workspace cannot be transformed through project import"
+    );
+  }
+
+  if (!fs.existsSync(root)) {
+    throw new Error("Imported project does not exist");
+  }
+
+  console.log("");
+  console.log("========================================");
+  console.log(" SIMEONJR PROJECT TRANSFORMATION 2.4B");
+  console.log("========================================");
+
+  console.log("[1/7] Reading imported project...");
+
+  const project = readProject(root);
+
+  console.log(
+    `✓ ${project.files.length} project files discovered`
+  );
+
+  if (!project.files.length) {
+    throw new Error(
+      "No readable project files found"
+    );
+  }
+
+  console.log("[2/7] Sending project to local AI...");
+
+  /*
+   * 2.4C CONTEXT-SAFE TRANSFORMATION
+   *
+   * The entire project must NOT be placed into one local-model
+   * context. Smaller batches keep the transformation compatible
+   * with machines running 4K-context local models.
+   */
+
+  const MAX_CONTEXT_CHARS = 9000;
+
+  const chunks = [];
+  let currentChunk = [];
+  let currentChars = 0;
+
+  for (const file of project.files) {
+    const block =
+      `===CURRENT FILE: ${file}===\n${project.source[file]}`;
+
+    if (
+      currentChunk.length &&
+      currentChars + block.length > MAX_CONTEXT_CHARS
+    ) {
+      chunks.push(currentChunk);
+      currentChunk = [];
+      currentChars = 0;
+    }
+
+    currentChunk.push({
+      file,
+      block
+    });
+
+    currentChars += block.length + 2;
+  }
+
+  if (currentChunk.length) {
+    chunks.push(currentChunk);
+  }
+
+  console.log(
+    `✓ Context-safe batches created: ${chunks.length}`
+  );
+
+  const modifications = {};
+
+  for (let batchIndex = 0; batchIndex < chunks.length; batchIndex++) {
+    const batch = chunks[batchIndex];
+
+    console.log(
+      `[2.4C] AI batch ${batchIndex + 1}/${chunks.length}...`
+    );
+
+    const batchFiles = batch.map(item => item.file);
+
+    const current = batch
+      .map(item => item.block)
+      .join("\n\n");
+
+    const result = await lmChat({
+      message: `
+TRANSFORMATION REQUEST:
+
+${prompt}
+
+THIS IS TRANSFORMATION BATCH ${batchIndex + 1} OF ${chunks.length}.
+
+ONLY CONSIDER THESE EXISTING FILES:
+
+${current}
+
+Analyze this existing application batch.
+
+DO NOT rebuild the project from scratch.
+
+Preserve existing functionality.
+
+Only modify files that genuinely need modification.
+
+Return ONLY modified files from this batch.
+
+Use exactly:
+
+===FILE: relative/path.ext===
+complete file contents
+
+Only these files may be modified:
+
+${batchFiles.join("\n")}
+
+Never modify:
+${PROTECTED_ROOTS.join("\n")}
+`,
+      system: `
+You are SimeonJr's autonomous existing-application transformation engineer.
+
+Upgrade the existing application without rebuilding it unnecessarily.
+
+Preserve existing functionality.
+Do not invent unrelated features.
+Do not modify protected directories.
+Return complete contents for modified files only.
+
+No markdown.
+No explanations.
+No code fences.
+`,
+      temperature: 0.05,
+      max_tokens: 6000
+    });
+
+    console.log("===== RAW AI TRANSFORM RESPONSE =====");
+    console.log(result.content);
+    console.log("===== END RAW AI RESPONSE =====");
+
+    let batchModifications = parseFiles(
+      result.content,
+      batchFiles
+    );
+
+    /*
+     * ZERO-MODIFICATION RECOVERY
+     *
+     * Weak local coding models can return valid JSON while
+     * inventing filenames. Retry with exact filename constraints.
+     */
+    if (!Object.keys(batchModifications).length) {
+
+      console.log(
+        "[2.4C] No valid files returned - retrying constrained AI request..."
+      );
+
+      const retryResult = await lmChat({
+        message: `
+TRANSFORMATION REQUEST:
+
+${prompt}
+
+You are modifying an EXISTING application.
+
+The ONLY files you are allowed to modify are:
+
+${batchFiles.join("\n")}
+
+CRITICAL RULES:
+
+1. You MUST use the exact filenames listed above.
+2. Do NOT invent filenames.
+3. Do NOT create build-test.js.
+4. Do NOT create package.json.
+5. Do NOT create README files.
+6. Do NOT rebuild the application.
+7. Preserve all existing functionality.
+8. Modify only what is required by the user's request.
+9. Return COMPLETE contents of modified files.
+10. Return JSON ONLY.
+
+Required format:
+
+{
+  "exact-existing-filename": {
+    "content": "complete file contents"
+  }
+}
+
+ALLOWED FILES:
+
+${batchFiles.join("\n")}
+
+EXISTING APPLICATION:
+
+${current}
+`,
+        system: `
+You are SimeonJr's autonomous existing-application transformation engineer.
+
+Your job is to modify an existing application safely.
+
+NEVER invent filenames.
+
+NEVER create unrelated files.
+
+NEVER rebuild the project from scratch.
+
+ONLY return files from the ALLOWED FILES list.
+
+Return valid JSON only.
+
+No markdown.
+No code fences.
+No explanations.
+`,
+        temperature: 0.01,
+        max_tokens: 8000
+      });
+
+      console.log("===== RETRY RAW AI RESPONSE =====");
+      console.log(retryResult.content);
+      console.log("===== END RETRY RAW AI RESPONSE =====");
+
+      batchModifications = parseFiles(
+        retryResult.content,
+        batchFiles
+      );
+    }
+    for (const [file, content] of Object.entries(batchModifications)) {
+      modifications[file] = content;
+    }
+  }
+
+  if (!Object.keys(modifications).length) {
+    throw new Error(
+      "AI returned no valid project modifications after retry"
+    );
+  }
+  console.log("[3/7] Creating project backup...");
+
+  const backupRoot = backupProject(
+    root,
+    Object.keys(modifications)
+  );
+
+  console.log(
+    `✓ Backup: ${backupRoot}`
+  );
+
+  console.log("[4/7] Applying safe modifications...");
+
+  try {
+    for (
+      const [file, content]
+      of Object.entries(modifications)
+    ) {
+      if (isProtected(file)) {
+        throw new Error(
+          `Protected path rejected: ${file}`
+        );
+      }
+
+      const target = safePath(root, file);
+
+      fs.mkdirSync(
+        path.dirname(target),
+        { recursive: true }
+      );
+
+      fs.writeFileSync(
+        target,
+        content,
+        "utf8"
+      );
+
+      console.log(`✓ Modified ${file}`);
+    }
+
+    console.log("[5/7] Building transformed project...");
+
+    let build = await buildProject(root);
+
+    let repairs = 0;
+
+    while (
+      !build.success &&
+      repairs < 3
+    ) {
+      repairs++;
+
+      console.log(
+        `✗ Build failed - AI repair ${repairs}/3`
+      );
+
+      const repair = await lmChat({
+        message: `
+The transformed project failed to build.
+
+ORIGINAL REQUEST:
+${prompt}
+
+BUILD ERROR:
+${build.stderr || build.reason || ""}
+
+BUILD OUTPUT:
+${build.stdout || ""}
+
+Repair the existing project.
+
+Return ONLY corrected files.
+
+Use:
+===FILE: path===
+complete file contents
+`,
+        system: `
+You are SimeonJr's autonomous software repair engineer.
+
+Repair the existing application.
+Do not rebuild it from scratch.
+Return only necessary corrected files.
+Never modify protected directories.
+No markdown.
+No explanations.
+`,
+        temperature: 0.02,
+        max_tokens: 16000
+      });
+
+      const repaired = parseFiles(
+        repair.content,
+        project.files
+      );
+
+      for (
+        const [file, content]
+        of Object.entries(repaired)
+      ) {
+        if (isProtected(file)) continue;
+
+        const target = safePath(root, file);
+
+        fs.mkdirSync(
+          path.dirname(target),
+          { recursive: true }
+        );
+
+        fs.writeFileSync(
+          target,
+          content,
+          "utf8"
+        );
+      }
+
+      build = await buildProject(root);
+    }
+
+    if (!build.success) {
+      console.log(
+        "✗ Build failed after repair attempts"
+      );
+
+      console.log(
+        "→ Rolling project back..."
+      );
+
+      rollbackProject(
+        root,
+        backupRoot,
+        Object.keys(modifications)
+      );
+
+      return {
+        ok: false,
+        phase: "2.4B",
+        rolledBack: true,
+        modified: Object.keys(modifications),
+        repairs,
+        backup: backupRoot,
+        build
+      };
+    }
+
+    console.log("[6/7] Final verification...");
+
+    const verification =
+      await buildProject(root);
+
+    if (!verification.success) {
+      rollbackProject(
+        root,
+        backupRoot,
+        Object.keys(modifications)
+      );
+
+      return {
+        ok: false,
+        phase: "2.4B",
+        rolledBack: true,
+        error:
+          "Final project verification failed",
+        backup: backupRoot
+      };
+    }
+
+    console.log("[7/7] TRANSFORMATION COMPLETE");
+
+    return {
+      ok: true,
+      phase: "2.4B",
+      projectRoot: root,
+      modified: Object.keys(modifications),
+      repairs,
+      backup: backupRoot,
+      build: verification,
+      model: "local-lm"
+    };
+
+  } catch (error) {
+    rollbackProject(
+      root,
+      backupRoot,
+      Object.keys(modifications)
+    );
+
+    return {
+      ok: false,
+      phase: "2.4B",
+      rolledBack: true,
+      error: error.message,
+      backup: backupRoot
+    };
+  }
+}
+
+export async function transformExisting({
+  projectRoot,
+  prompt,
+  lmChat
+}) {
+  return transformProject({
+    projectRoot,
+    prompt,
+    lmChat
+  });
+}
+
+
+
+
+
+
+

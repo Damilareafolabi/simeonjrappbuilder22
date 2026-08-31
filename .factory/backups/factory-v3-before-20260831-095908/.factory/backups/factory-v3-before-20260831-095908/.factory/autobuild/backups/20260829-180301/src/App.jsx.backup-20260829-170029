@@ -1,0 +1,391 @@
+﻿import { useState } from "react";
+import "./App.css";
+
+const examples = [
+  "Create a professional inventory management system",
+  "Create a CRM with customers, contacts and sales",
+  "Create an employee task management dashboard",
+  "Create an invoice generator",
+];
+
+function App() {
+  const [prompt, setPrompt] = useState("");
+  const [building, setBuilding] = useState(false);
+  const [status, setStatus] = useState("Ready");
+  const [files, setFiles] = useState([]);
+  const [error, setError] = useState("");
+  const [previewKey, setPreviewKey] = useState(Date.now());
+
+  const [logs, setLogs] = useState([
+    "Workspace initialized",
+    "Backend connected",
+    "Local Qwen connected",
+  ]);
+
+  async function buildApp() {
+    if (!prompt.trim() || building) return;
+
+    setBuilding(true);
+    setError("");
+    setFiles([]);
+    setStatus("Planning...");
+    setLogs([
+      "Workspace initialized",
+      "Backend connected",
+      "Local Qwen connected",
+      "→ Planning application",
+    ]);
+
+    try {
+      setStatus("Building...");
+      setLogs((x) => [...x, "→ Sending requirements to local Qwen"]);
+
+      const response = await fetch("http://127.0.0.1:8787/api/ai/build", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prompt,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || "Build failed");
+      }
+
+      setStatus("Testing...");
+      setLogs((x) => [
+        ...x,
+        "✓ Application files generated",
+        ...(data.files || []).map((file) => `✓ ${file}`),
+        "✓ Build completed successfully",
+        "✓ Preparing live preview",
+      ]);
+
+      setFiles(data.files || []);
+
+      // Give the backend a moment to finish writing/building before
+      // refreshing the preview iframe.
+      setTimeout(() => {
+        setPreviewKey(Date.now());
+        setStatus("Build Complete");
+        setLogs((x) => [...x, "✓ LIVE PREVIEW READY"]);
+      }, 500);
+    } catch (err) {
+      setError(err.message);
+      setStatus("Build Failed");
+      setLogs((x) => [...x, `✗ ${err.message}`]);
+    } finally {
+      setBuilding(false);
+    }
+  }
+
+  function refreshPreview() {
+    setPreviewKey(Date.now());
+  }
+
+  function openPreview() {
+    window.open(
+      `http://127.0.0.1:8787/preview?t=${Date.now()}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  }
+
+  function fullscreenPreview() {
+    const frame = document.getElementById("livePreviewFrame");
+
+    if (frame?.requestFullscreen) {
+      frame.requestFullscreen();
+    }
+  }
+
+  function newApp() {
+    setPrompt("");
+    setFiles([]);
+    setError("");
+    setStatus("Ready");
+    setPreviewKey(Date.now());
+
+    setLogs([
+      "Workspace initialized",
+      "Backend connected",
+      "Local Qwen connected",
+    ]);
+  }
+
+  return (
+    <div className="factory">
+      <aside className="sidebar">
+        <div className="brand">
+          <div className="brandMark">SJ</div>
+          <div>
+            <strong>SimeonJr</strong>
+            <span>App Builder</span>
+          </div>
+        </div>
+
+        <button className="newApp" onClick={newApp}>
+          <span>＋</span>
+          New App
+        </button>
+
+        <nav>
+          <div className="navSection">FACTORY</div>
+
+          <a className="active">
+            <span>⌘</span>
+            Build
+          </a>
+
+          <a>
+            <span>◈</span>
+            Projects
+          </a>
+
+          <a>
+            <span>▣</span>
+            Templates
+          </a>
+
+          <a>
+            <span>◫</span>
+            Files
+          </a>
+        </nav>
+
+        <div className="sidebarBottom">
+          <div className="localAI">
+            <span className="dot" />
+
+            <div>
+              <strong>Local AI</strong>
+              <small>Qwen 1.5B · LM Studio</small>
+            </div>
+
+            <span className="onlineText">ONLINE</span>
+          </div>
+        </div>
+      </aside>
+
+      <main className="main">
+        <header className="topbar">
+          <div>
+            <span className="eyebrow">SIMEONJR APP FACTORY</span>
+            <h1>Build something.</h1>
+          </div>
+
+          <div className="connection">
+            <span className="dot" />
+            LOCAL AI CONNECTED
+          </div>
+        </header>
+
+        <section className="hero">
+          <div className="heroBadge">
+            <span>✦</span>
+            AI-POWERED · 100% LOCAL
+          </div>
+
+          <h2>What do you want to build?</h2>
+
+          <p>
+            Describe your idea in plain English. SimeonJr Agent will plan,
+            generate, test, repair and prepare your application for live
+            preview.
+          </p>
+
+          <div className="promptBox">
+            <textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Build me a professional application..."
+              disabled={building}
+            />
+
+            <div className="promptFooter">
+              <div className="promptInfo">
+                <span className="spark">✦</span>
+                <span>Powered by Local Qwen</span>
+                <span className="separator">•</span>
+                <span>No external API required</span>
+              </div>
+
+              <button
+                className="buildButton"
+                onClick={buildApp}
+                disabled={building || !prompt.trim()}
+              >
+                <span>{building ? "BUILDING..." : "BUILD APP"}</span>
+                <span className="buttonArrow">→</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="examples">
+            <span>Try an idea:</span>
+
+            {examples.map((example) => (
+              <button
+                key={example}
+                onClick={() => setPrompt(example)}
+                disabled={building}
+              >
+                {example}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section className="workspace">
+          <div className="panel activity">
+            <div className="panelHeader">
+              <div>
+                <span className="panelEyebrow">AGENT ACTIVITY</span>
+                <h3>{status}</h3>
+              </div>
+
+              <span className={`status ${building ? "working" : "ready"}`}>
+                <span className="statusDot" />
+                {building ? "WORKING" : "READY"}
+              </span>
+            </div>
+
+            <div className="logs">
+              {logs.map((log, index) => (
+                <div className="log" key={`${log}-${index}`}>
+                  <span className="logIcon">
+                    {log.startsWith("✓")
+                      ? "✓"
+                      : log.startsWith("✗")
+                        ? "!"
+                        : "→"}
+                  </span>
+
+                  <span>{log.replace(/^[✓✗→]\s*/, "")}</span>
+                </div>
+              ))}
+            </div>
+
+            {error && <div className="error">{error}</div>}
+          </div>
+
+          <div className="panel files">
+            <div className="panelHeader">
+              <div>
+                <span className="panelEyebrow">GENERATED PROJECT</span>
+                <h3>Files</h3>
+              </div>
+
+              <span className="fileCount">{files.length}</span>
+            </div>
+
+            {files.length === 0 ? (
+              <div className="empty">
+                <div className="emptyIcon">◇</div>
+                <strong>No application generated yet</strong>
+                <span>Your generated project files will appear here.</span>
+              </div>
+            ) : (
+              <div className="fileList">
+                {files.map((file) => (
+                  <div className="file" key={file}>
+                    <span>{file.endsWith(".jsx") ? "⚛" : "◇"}</span>
+                    <span>{file}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="previewPanel">
+          <div className="previewHeader">
+            <div>
+              <span className="panelEyebrow">LIVE PREVIEW</span>
+              <h3>Your application</h3>
+            </div>
+
+            <div className="previewActions">
+              <button onClick={refreshPreview} title="Refresh preview">
+                ↻ <span>Refresh</span>
+              </button>
+
+              <button onClick={openPreview} title="Open preview in new tab">
+                ↗ <span>Open</span>
+              </button>
+
+              <button
+                onClick={fullscreenPreview}
+                title="Fullscreen preview"
+              >
+                ⛶ <span>Fullscreen</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="previewBrowser">
+            <div className="browserBar">
+              <div className="browserDots">
+                <span />
+                <span />
+                <span />
+              </div>
+
+              <div className="browserAddress">
+                <span className="lock">⌁</span>
+                127.0.0.1:8787/preview
+              </div>
+
+              <div className="browserStatus">
+                <span className="dot" />
+                LIVE
+              </div>
+            </div>
+
+            <div className="previewFrameWrap">
+              <iframe
+                key={previewKey}
+                id="livePreviewFrame"
+                className="livePreviewFrame"
+                src={`http://127.0.0.1:8787/preview?t=${previewKey}`}
+                title="SimeonJr Live Preview"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section className="pipeline">
+          <div className="pipelineTitle">
+            <span className="panelEyebrow">FACTORY PIPELINE</span>
+            <h3>Prompt → Production</h3>
+          </div>
+
+          {[
+            ["01", "PLAN", "Requirements & architecture"],
+            ["02", "BUILD", "Generate application"],
+            ["03", "TEST", "Validate the project"],
+            ["04", "FIX", "Repair build errors"],
+            ["05", "PREVIEW", "Run the application"],
+          ].map(([number, title, description], index) => (
+            <div className="step" key={number}>
+              <span className="stepNumber">{number}</span>
+
+              <div className="stepContent">
+                <strong>{title}</strong>
+                <small>{description}</small>
+              </div>
+
+              {index < 4 && <span className="stepArrow">→</span>}
+            </div>
+          ))}
+        </section>
+      </main>
+    </div>
+  );
+}
+
+export default App;

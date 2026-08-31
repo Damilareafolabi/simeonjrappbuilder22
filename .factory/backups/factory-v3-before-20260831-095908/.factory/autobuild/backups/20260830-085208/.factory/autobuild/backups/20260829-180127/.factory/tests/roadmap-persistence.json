@@ -1,0 +1,10 @@
+﻿{
+  "test": "roadmap-persistence",
+  "module": "0.2",
+  "checks": [
+    "roadmap exists",
+    "factory state exists",
+    "current module is persisted",
+    "completed modules are persisted"
+  ]
+}

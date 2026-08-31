@@ -1,0 +1,13 @@
+﻿{
+  "module": "1.4",
+  "name": "Verification Gate",
+  "version": "1.0",
+  "rules": {
+    "requireBuild": true,
+    "requireTests": true,
+    "requireExpectedOutput": true,
+    "requireStateConsistency": true,
+    "rejectFailures": true,
+    "neverSkipVerification": true
+  }
+}

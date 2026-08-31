@@ -1,0 +1,15 @@
+﻿{
+  "module": "1.2",
+  "name": "Task Planner",
+  "version": "1.0",
+  "rules": {
+    "readRoadmap": true,
+    "respectDependencies": true,
+    "smallTasks": true,
+    "persistQueue": true,
+    "verifyBeforePass": true,
+    "stopOnFailure": true
+  },
+  "input": ".factory/roadmap.json",
+  "output": ".factory/engine/tasks/task-queue.json"
+}

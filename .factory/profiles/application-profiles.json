@@ -1,0 +1,12 @@
+﻿{
+  "profiles": [
+    "SaaS","CRM","ERP","E-commerce","Marketplace","Social Network",
+    "Messaging","Trading","Finance","Analytics","Research","Survey",
+    "Data Collection","LMS","Education","Healthcare","Booking",
+    "Inventory","POS","Accounting","HR","Recruitment","Logistics",
+    "Real Estate","CMS","Media","AI Assistant","Knowledge Base",
+    "Document Platform","Project Management","Task Management",
+    "Customer Portal","Membership","Community","Digital Suite",
+    "Admin Platform","Developer Platform"
+  ]
+}

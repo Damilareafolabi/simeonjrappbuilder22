@@ -1,0 +1,37 @@
+﻿{
+  "taskId": "2.4",
+  "name": "Transform Existing",
+  "phase": 2,
+  "description": "Safely transform an existing application using the persisted project analysis.",
+  "status": "ready",
+  "input": {
+    "analysis": ".factory/state/project-analysis.json"
+  },
+  "safety": {
+    "backupBeforeTransform": true,
+    "buildBeforeTransform": true,
+    "buildAfterTransform": true,
+    "rollbackOnFailure": true,
+    "neverRebuildFromScratch": true,
+    "preserveExistingApplication": true
+  },
+  "steps": [
+    "Load persisted project analysis",
+    "Verify existing project structure",
+    "Create transformation checkpoint",
+    "Create transformation plan",
+    "Backup affected files",
+    "Apply controlled transformations",
+    "Run production build",
+    "Verify transformed project",
+    "Persist transformation result",
+    "Rollback automatically if verification fails"
+  ],
+  "successCriteria": [
+    "Analysis loads successfully",
+    "Existing project remains intact",
+    "Transformation is limited to approved files",
+    "Production build passes",
+    "Transformation result is persisted"
+  ]
+}

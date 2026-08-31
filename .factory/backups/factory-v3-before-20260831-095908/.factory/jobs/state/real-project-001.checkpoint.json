@@ -1,0 +1,13 @@
+﻿{
+    "created":  "2026-08-29T19:12:53.9176299+01:00",
+    "totalBatches":  0,
+    "nextBatch":  1,
+    "completedBatches":  0,
+    "jobId":  "real-project-001",
+    "phase":  "2.4C",
+    "contextLimit":  4096,
+    "target":  "C:\\Users\\LUMEN GLOB AL\\Desktop\\SimeonJrAppBuilder\\.factory\\test-projects\\real-project-001",
+    "model":  "qwen2.5-coder-1.5b-instruct",
+    "status":  "READY_TO_RESUME",
+    "maxPromptTokens":  2600
+}

@@ -1,0 +1,23 @@
+﻿{
+  "schema": "simeonjr-task-v1",
+  "task": {
+    "id": "string",
+    "phase": "number",
+    "name": "string",
+    "description": "string",
+    "status": "pending|running|testing|passed|failed|blocked",
+    "priority": "number",
+    "dependencies": [],
+    "attempt": "number",
+    "maxAttempts": "number",
+    "startedAt": "datetime|null",
+    "completedAt": "datetime|null",
+    "build": "pending|passed|failed",
+    "tests": "pending|passed|failed",
+    "verification": "pending|passed|failed",
+    "result": "PASS|FAIL|null",
+    "error": "string|null",
+    "checkpoint": "string|null",
+    "backup": "string|null"
+  }
+}

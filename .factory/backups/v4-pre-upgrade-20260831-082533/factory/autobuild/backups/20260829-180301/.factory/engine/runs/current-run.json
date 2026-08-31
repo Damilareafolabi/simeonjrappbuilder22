@@ -1,0 +1,13 @@
+﻿{
+    "status":  "passed",
+    "module":  "1.3",
+    "currentTask":  null,
+    "completedTasks":  [
+
+                       ],
+    "failedTasks":  [
+
+                    ],
+    "attempts":  1,
+    "lastResult":  "PASS"
+}

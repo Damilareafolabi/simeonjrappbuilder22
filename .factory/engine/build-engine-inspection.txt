@@ -1,0 +1,306 @@
+﻿
+  backend\server.js:62:  try{
+  backend\server.js:63:    const response=await fetch(LM_STUDIO_URL + '/v1/models');
+  backend\server.js:64:    if(!response.ok)return LM_MODEL;
+  backend\server.js:65:    const data=await response.json();
+  backend\server.js:66:    return data?.data?.[0]?.id || LM_MODEL;
+  backend\server.js:67:  }catch{return LM_MODEL;}
+  backend\server.js:68:}
+  backend\server.js:69:
+> backend\server.js:70:async function lmChat({
+  backend\server.js:71:  message,
+  backend\server.js:72:  system,
+  backend\server.js:73:  temperature = 0.1,
+  backend\server.js:74:  max_tokens = 4000
+  backend\server.js:75:}) {
+  backend\server.js:76:  const response = await fetch(
+  backend\server.js:77:    `${LM_STUDIO_URL}/v1/chat/completions`,
+  backend\server.js:78:    {
+  backend\server.js:79:      method: "POST",
+  backend\server.js:80:      headers: {
+  backend\server.js:81:        "Content-Type": "application/json"
+  backend\server.js:82:      },
+  backend\server.js:83:      body: JSON.stringify({
+  backend\server.js:84:        model: await getActiveLmModel(),
+  backend\server.js:85:        messages: [
+  backend\server.js:225:
+  backend\server.js:226:    if (!message || typeof message !== "string") {
+  backend\server.js:227:      return res.status(400).json({
+  backend\server.js:228:        ok: false,
+  backend\server.js:229:        error: "message is required"
+  backend\server.js:230:      });
+  backend\server.js:231:    }
+  backend\server.js:232:
+> backend\server.js:233:    const result = await lmChat({
+  backend\server.js:234:      message,
+  backend\server.js:235:      system:
+  backend\server.js:236:        system ||
+  backend\server.js:237:        "You are SimeonJr Agent, a local coding assistant.",
+  backend\server.js:238:      temperature:
+  backend\server.js:239:        typeof temperature === "number"
+  backend\server.js:240:          ? temperature
+  backend\server.js:241:          : 0.2,
+  backend\server.js:242:      max_tokens:
+  backend\server.js:243:        typeof max_tokens === "number"
+  backend\server.js:244:          ? max_tokens
+  backend\server.js:245:          : 2000
+  backend\server.js:246:    });
+  backend\server.js:247:
+  backend\server.js:248:    res.json({
+  backend\server.js:381:    );
+  backend\server.js:382:
+  backend\server.js:383:    written.push(relativePath);
+  backend\server.js:384:  }
+  backend\server.js:385:
+  backend\server.js:386:  return written;
+  backend\server.js:387:}
+  backend\server.js:388:
+> backend\server.js:389:async function repairGeneratedBuild(buildResult, originalPrompt) {
+  backend\server.js:390:  const repairSystem = `
+  backend\server.js:391:You are SimeonJr's autonomous debugging engineer.
+  backend\server.js:392:
+  backend\server.js:393:A React/Vite application was generated but its production build failed.
+  backend\server.js:394:
+  backend\server.js:395:Your job is to repair the application.
+  backend\server.js:396:
+  backend\server.js:397:DO NOT explain anything.
+  backend\server.js:398:DO NOT use markdown.
+  backend\server.js:399:DO NOT use code fences.
+  backend\server.js:400:Return ONLY files that need to be changed using this exact format:
+  backend\server.js:401:
+  backend\server.js:402:===FILE: path/to/file===
+  backend\server.js:403:file contents
+  backend\server.js:404:
+  backend\server.js:405:The application must remain a React/Vite application.
+  backend\server.js:406:
+  backend\server.js:407:Fix the actual build error.
+  backend\server.js:408:Do not remove existing functionality unless necessary.
+  backend\server.js:409:`;
+  backend\server.js:410:
+> backend\server.js:411:  const repairPrompt = `
+  backend\server.js:412:Original application request:
+  backend\server.js:413:
+> backend\server.js:414:${originalPrompt}
+  backend\server.js:415:
+  backend\server.js:416:The production build failed.
+  backend\server.js:417:
+  backend\server.js:418:BUILD STDOUT:
+  backend\server.js:419:${buildResult.stdout}
+  backend\server.js:420:
+  backend\server.js:421:BUILD STDERR:
+  backend\server.js:422:${buildResult.stderr}
+  backend\server.js:423:
+  backend\server.js:424:Return the corrected files only.
+  backend\server.js:425:`;
+  backend\server.js:426:
+> backend\server.js:427:  const result = await lmChat({
+> backend\server.js:428:    message: repairPrompt,
+  backend\server.js:429:    system: repairSystem,
+  backend\server.js:430:    temperature: 0.05,
+  backend\server.js:431:    max_tokens: 6000
+  backend\server.js:432:  });
+  backend\server.js:433:
+  backend\server.js:434:  const files = parseFiles(result.content);
+  backend\server.js:435:
+  backend\server.js:436:  if (!Object.keys(files).length) {
+  backend\server.js:437:    return {
+  backend\server.js:438:      ok: false,
+  backend\server.js:439:      error: "AI debugger returned no repair files",
+  backend\server.js:440:      raw: result.content
+  backend\server.js:441:    };
+  backend\server.js:442:  }
+  backend\server.js:443:
+  backend\server.js:566:    res.status(500).json({
+  backend\server.js:567:      ok: false,
+  backend\server.js:568:      error: error.message
+  backend\server.js:569:    });
+  backend\server.js:570:  }
+  backend\server.js:571:});
+  backend\server.js:572:
+  backend\server.js:573:app.post("/api/ai/transform", async (req, res) => {
+> backend\server.js:574:  const prompt = req.body?.prompt;
+  backend\server.js:575:  const projectRoot = req.body?.projectRoot;
+  backend\server.js:576:
+> backend\server.js:577:  if (!prompt || typeof prompt !== "string") {
+  backend\server.js:578:    return res.status(400).json({
+  backend\server.js:579:      ok: false,
+> backend\server.js:580:      error: "prompt is required"
+  backend\server.js:581:    });
+  backend\server.js:582:  }
+  backend\server.js:583:
+  backend\server.js:584:  try {
+  backend\server.js:585:    console.log("");
+  backend\server.js:586:    console.log("========================================");
+  backend\server.js:587:    console.log(" SIMEONJR API TRANSFORM 2.4");
+  backend\server.js:588:    console.log("========================================");
+  backend\server.js:589:
+  backend\server.js:590:    const result = await transformExisting({
+  backend\server.js:591:      projectRoot,
+> backend\server.js:592:      prompt,
+> backend\server.js:593:      lmChat
+  backend\server.js:594:    });
+  backend\server.js:595:
+  backend\server.js:596:    res.status(result.ok ? 200 : 422).json(result);
+  backend\server.js:597:
+  backend\server.js:598:  } catch (error) {
+  backend\server.js:599:    console.error("Transform error:", error);
+  backend\server.js:600:
+  backend\server.js:601:    res.status(500).json({
+  backend\server.js:602:      ok: false,
+  backend\server.js:603:      phase: "2.4",
+  backend\server.js:604:      error: error.message
+  backend\server.js:605:    });
+  backend\server.js:606:  }
+  backend\server.js:607:});
+> backend\server.js:608:app.post("/api/ai/build", async (req, res) => {
+> backend\server.js:609:  const prompt = req.body?.prompt;
+  backend\server.js:610:  const projectRoot = req.body?.projectRoot;
+  backend\server.js:611:
+> backend\server.js:612:  if (!prompt || typeof prompt !== "string") {
+  backend\server.js:613:    return res.status(400).json({
+  backend\server.js:614:      ok: false,
+> backend\server.js:615:      error: "prompt is required"
+  backend\server.js:616:    });
+  backend\server.js:617:  }
+  backend\server.js:618:
+  backend\server.js:619:  try {
+  backend\server.js:620:    fs.mkdirSync(GENERATED, {
+  backend\server.js:621:      recursive: true
+  backend\server.js:622:    });
+  backend\server.js:623:
+> backend\server.js:624:    const system = "You are SimeonJr App Builder, a senior product architect, product 
+engineer, UI/UX designer, software architect and React developer.\n\nYour job is to transform the user's request into 
+a COMPLETE, FUNCTIONAL, PRODUCTION-QUALITY application or application suite.\n\nUNIVERSAL PRODUCT 
+ARCHITECTURE\n\nFirst understand the user's request before coding.\n\nDetermine internally:\n- product purpose\n- 
+target users\n- user roles\n- workflows\n- information architecture\n- navigation\n- screens\n- entities\n- data 
+relationships\n- permissions\n- business rules\n- responsive behavior\n- offline/local requirements\n- deployment 
+requirements\n\nIMPORTANT MULTI-APP RULE:\n\nDo NOT automatically create multiple applications.\n\nCreate a SINGLE 
+application when the user requests one application.\n\nCreate MULTIPLE coordinated applications only when the user's 
+request explicitly requires a suite, platform, ecosystem, multiple products, multiple portals, or multiple distinct 
+applications.\n\nWhen a multi-application suite is requested, determine the correct applications from the user's 
+requirements.\n\nDo not hardcode CRM, inventory, finance, booking or any other applications into every project.\n\nThe 
+user's prompt is the source of truth.\n\nAPPLICATION COMPLETENESS\n\nApplications must be designed for real-world use, 
+not as simple demonstrations.\n\nImplement the workflows appropriate to the requested product.\n\nExamples 
+include:\n\nCRM:\ncustomers, contacts, activities, pipeline, search, filtering, details, metrics and 
+actions.\n\nInventory:\nproducts, categories, stock levels, movements, low-stock alerts, search, filtering and 
+inventory actions.\n\nProject management:\nprojects, tasks, priorities, statuses, progress, assignments, filtering and 
+detail workflows.\n\nFinance:\naccounts, balances, transactions, categories, reporting and financial 
+workflows.\n\nBooking:\ncalendar, availability, customers, bookings, status and booking workflows.\n\nResearch/data 
+collection:\nforms, submissions, respondents, validation, conditional logic, data review, exports and quality 
+workflows.\n\nFor other products, design the appropriate real workflows instead of forcing these 
+examples.\n\nPRODUCTION UX\n\nThe interface must feel like a professionally designed modern software 
+product.\n\nUse:\n- strong typography hierarchy\n- intentional spacing\n- consistent components\n- clear navigation\n- 
+useful dashboards\n- polished tables\n- professional forms\n- search\n- filtering\n- sorting\n- meaningful empty 
+states\n- loading states\n- error states\n- success feedback\n- confirmation states\n- hover states\n- focus states\n- 
+disabled states\n- responsive layouts\n- mobile navigation\n- accessible controls\n\nAvoid:\n- generic AI-looking 
+interfaces\n- fake buttons\n- dead controls\n- excessive rounded cards\n- excessive shadows\n- random gradients\n- 
+giant empty areas\n- tiny text\n- unnecessary animation\n- visual clutter\n\nDESIGN SYSTEM\n\nCreate a coherent visual 
+design system.\n\nUse CSS variables for:\n- backgrounds\n- surfaces\n- text\n- muted text\n- borders\n- primary 
+accent\n- success\n- warning\n- danger\n- spacing\n- radii\n- shadows\n- transitions\n\nFUNCTIONALITY\n\nEvery major 
+visible action must perform a meaningful operation.\n\nUse local state and local persistence when 
+appropriate.\n\nImplement CRUD-style workflows where appropriate.\n\nUse realistic demonstration data when real data 
+is unavailable.\n\nDo not create broken controls simply to make the interface look complete.\n\nOFFLINE-FIRST\n\nCore 
+application functionality must not require API keys.\n\nDo not require external AI APIs.\n\nDo not require external 
+services for basic application operation.\n\nApplications should be capable of running locally on the user's computer 
+or local network.\n\nIf an online deployment mode is requested, keep deployment architecture separate from the local 
+core.\n\nSAAS-READY ARCHITECTURE\n\nIf the user requests SaaS, multi-user, hosted or subscription functionality, 
+design the application architecture accordingly.\n\nConsider:\n- organizations\n- workspaces\n- users\n- roles\n- 
+permissions\n- tenant isolation\n- settings\n- subscription-ready structure\n- deployment configuration\n\nDo not add 
+unnecessary SaaS complexity when the user only requests a local application.\n\nRESPONSIVE DESIGN\n\nSupport desktop, 
+laptop, tablet and mobile.\n\nCODE QUALITY\n\nGenerate valid React JSX, CSS and HTML.\nUse React 18+ createRoot.\nUse 
+Vite-compatible code.\nUse maintainable readable code.\nDo not use TypeScript.\nDo not use external APIs unless the 
+user explicitly requests an integration.\nDo not use API keys unless the user explicitly requests an integration 
+requiring one.\nDo not add unnecessary dependencies.\nThe application must build successfully with Vite.\n\nOUTPUT 
+FORMAT\n\nDO NOT RETURN JSON.\nDO NOT USE MARKDOWN.\nDO NOT USE CODE FENCES.\nDO NOT EXPLAIN ANYTHING.\n\nReturn files 
+exactly using:\n\n===FILE: index.html===\nfile contents\n\n===FILE: src/App.jsx===\nfile contents\n\n===FILE: 
+src/App.css===\nfile contents\n\n===FILE: src/main.jsx===\nfile contents\n\nAdditional files may be created only when 
+genuinely necessary.\n\nBefore returning files, internally review:\nUX, UI hierarchy, workflows, responsiveness, 
+functionality, accessibility, local operation and build validity.";
+  backend\server.js:625:
+> backend\server.js:626:    const result = await lmChat({
+  backend\server.js:627:      message: `
+> backend\server.js:628:Build this application:
+  backend\server.js:629:
+> backend\server.js:630:${prompt}
+  backend\server.js:631:
+  backend\server.js:632:Return the complete application using the required FILE format.
+  backend\server.js:633:`,
+  backend\server.js:634:      system,
+  backend\server.js:635:      temperature: 0.05,
+  backend\server.js:636:      max_tokens: 5000
+  backend\server.js:637:    });
+  backend\server.js:638:
+  backend\server.js:639:    const files = parseFiles(result.content);
+  backend\server.js:640:
+  backend\server.js:641:    const repairedFiles = repairGeneratedFiles(files);
+  backend\server.js:642:
+  backend\server.js:643:    const required = [
+  backend\server.js:644:      "index.html",
+  backend\server.js:645:      "src/App.jsx",
+  backend\server.js:707:      repairAttempts++;
+  backend\server.js:708:
+  backend\server.js:709:      console.log(
+  backend\server.js:710:        `Build failed. Starting AI repair attempt ${repairAttempts}/3...`
+  backend\server.js:711:      );
+  backend\server.js:712:
+  backend\server.js:713:      const repair = await repairGeneratedBuild(
+  backend\server.js:714:        buildResult,
+> backend\server.js:715:        prompt
+  backend\server.js:716:      );
+  backend\server.js:717:
+  backend\server.js:718:      repairHistory.push(repair);
+  backend\server.js:719:
+  backend\server.js:720:      if (!repair.ok) {
+  backend\server.js:721:        break;
+  backend\server.js:722:      }
+  backend\server.js:723:
+  backend\server.js:724:      buildResult = await runGeneratedBuild();
+  backend\server.js:725:    }
+  backend\server.js:726:
+  backend\server.js:727:    if (!buildResult.success) {
+  backend\server.js:728:      return res.status(500).json({
+  backend\server.js:729:        ok: false,
+  backend\server.js:730:        stage: "build",
+  backend\server.js:731:        model: result.model,
+> backend\server.js:732:        prompt,
+  backend\server.js:733:        files: writtenFiles,
+  backend\server.js:734:        repairAttempts,
+  backend\server.js:735:        repairHistory,
+  backend\server.js:736:        build: buildResult,
+  backend\server.js:737:        preview: false
+  backend\server.js:738:      });
+  backend\server.js:739:    }
+  backend\server.js:740:
+  backend\server.js:741:    const indexFile = path.join(
+  backend\server.js:742:      GENERATED_DIST,
+  backend\server.js:743:      "index.html"
+  backend\server.js:744:    );
+  backend\server.js:745:
+  backend\server.js:746:    if (!fs.existsSync(indexFile)) {
+  backend\server.js:747:      return res.status(500).json({
+  backend\server.js:752:        repairAttempts,
+  backend\server.js:753:        build: buildResult
+  backend\server.js:754:      });
+  backend\server.js:755:    }
+  backend\server.js:756:
+  backend\server.js:757:    res.json({
+  backend\server.js:758:      ok: true,
+  backend\server.js:759:      model: result.model,
+> backend\server.js:760:      prompt,
+  backend\server.js:761:      files: writtenFiles,
+  backend\server.js:762:      generatedWorkspace: GENERATED,
+  backend\server.js:763:      build: {
+  backend\server.js:764:        success: true,
+  backend\server.js:765:        repairAttempts,
+  backend\server.js:766:        stdout: buildResult.stdout,
+  backend\server.js:767:        stderr: buildResult.stderr
+  backend\server.js:768:      },
+  backend\server.js:769:      preview: {
+  backend\server.js:770:        ready: true,
+  backend\server.js:771:        url: "/preview"
+  backend\server.js:772:      }
+  backend\server.js:773:    });
+  backend\server.js:774:
+  backend\server.js:775:  } catch (error) {
+
+

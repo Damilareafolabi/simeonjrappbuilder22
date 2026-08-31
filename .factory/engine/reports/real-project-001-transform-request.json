@@ -1,0 +1,10 @@
+﻿{
+    "testId":  "real-project-001",
+    "projectPath":  "C:\\Users\\LUMEN GLOB AL\\Desktop\\SimeonJrAppBuilder\\.factory\\test-projects\\real-project-001",
+    "mode":  "controlled-test",
+    "instruction":  "Transform the imported test application safely without modifying the factory.",
+    "requireBackup":  true,
+    "requireBuild":  true,
+    "requireRollbackCapability":  true,
+    "createdAt":  "2026-08-29T18:44:50.2060006+01:00"
+}

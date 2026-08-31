@@ -1,0 +1,504 @@
+﻿import { useEffect, useState } from "react";
+import {
+  Bot,
+  Folder,
+  FileCode2,
+  Terminal,
+  Play,
+  Send,
+  Settings,
+  ChevronDown,
+  Sparkles,
+  CheckCircle2,
+  AlertCircle,
+  Loader2
+} from "lucide-react";
+import "./App.css";
+
+const API = "http://127.0.0.1:8787";
+
+export default function App() {
+  const [prompt, setPrompt] = useState("");
+  const [files, setFiles] = useState([]);
+  const [terminal, setTerminal] = useState([
+    "$ SimeonJr Agent workspace initialized",
+    "✓ Local AI interface ready"
+  ]);
+  const [messages, setMessages] = useState([]);
+  const [online, setOnline] = useState(false);
+  const [aiOnline, setAiOnline] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [generatedCode, setGeneratedCode] = useState("");
+
+  const checkAgent = async () => {
+    try {
+      const r = await fetch(`${API}/api/health`);
+      const d = await r.json();
+      setOnline(d.ok === true);
+    } catch {
+      setOnline(false);
+    }
+  };
+
+  const checkAI = async () => {
+    try {
+      const r = await fetch(`${API}/api/ai/status`);
+      const d = await r.json();
+      setAiOnline(d.ok === true && d.connected === true);
+    } catch {
+      setAiOnline(false);
+    }
+  };
+
+  const loadFiles = async () => {
+    try {
+      const r = await fetch(`${API}/api/files`);
+      const d = await r.json();
+
+      if (d.ok) {
+        setFiles(d.files);
+      }
+    } catch {}
+  };
+
+  useEffect(() => {
+    checkAgent();
+    checkAI();
+    loadFiles();
+
+    const timer = setInterval(() => {
+      checkAgent();
+      checkAI();
+      loadFiles();
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const sendPrompt = async () => {
+    const text = prompt.trim();
+
+    if (!text || busy) return;
+
+    setBusy(true);
+
+    setMessages(m => [
+      ...m,
+      {
+        role: "user",
+        text
+      }
+    ]);
+
+    setTerminal(t => [
+      ...t,
+      `$ USER: ${text}`,
+      "⏳ Sending instruction to local Qwen..."
+    ]);
+
+    try {
+      const r = await fetch(`${API}/api/ai/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: text,
+          system:
+            "You are SimeonJr Agent, a local coding assistant. Help the user build software. Be concise and provide practical implementation guidance.",
+          temperature: 0.2,
+          max_tokens: 2000
+        })
+      });
+
+      const d = await r.json();
+
+      if (!r.ok || !d.ok) {
+        throw new Error(d.error || "AI request failed");
+      }
+
+      setMessages(m => [
+        ...m,
+        {
+          role: "agent",
+          text: d.content
+        }
+      ]);
+
+      setTerminal(t => [
+        ...t,
+        "✓ Qwen response received",
+        `✓ Model: ${d.model}`
+      ]);
+    } catch (e) {
+      setMessages(m => [
+        ...m,
+        {
+          role: "agent",
+          text: `AI error: ${e.message}`
+        }
+      ]);
+
+      setTerminal(t => [
+        ...t,
+        `✗ AI ERROR: ${e.message}`
+      ]);
+    }
+
+    setPrompt("");
+    setBusy(false);
+  };
+
+  const buildProject = async () => {
+    const text = prompt.trim();
+
+    if (!text) {
+      setMessages(m => [
+        ...m,
+        {
+          role: "agent",
+          text: "Describe the application you want to build first."
+        }
+      ]);
+
+      return;
+    }
+
+    if (busy) return;
+
+    setBusy(true);
+
+    setTerminal(t => [
+      ...t,
+      "",
+      "======================================",
+      "🚀 SIMEONJR AI BUILD",
+      "======================================",
+      `$ PROMPT: ${text}`,
+      "⏳ Asking local Qwen to generate the application..."
+    ]);
+
+    setMessages(m => [
+      ...m,
+      {
+        role: "user",
+        text: `BUILD: ${text}`
+      }
+    ]);
+
+    try {
+      const r = await fetch(`${API}/api/ai/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: `
+Build a React application based on this request:
+
+${text}
+
+Return a complete App.jsx implementation.
+Use React and JSX.
+Do not explain the code.
+Return only the code.
+          `.trim(),
+          system:
+            "You are the code generation engine for SimeonJr App Builder. Generate clean React JSX suitable for a Vite application.",
+          temperature: 0.1,
+          max_tokens: 4000
+        })
+      });
+
+      const d = await r.json();
+
+      if (!r.ok || !d.ok) {
+        throw new Error(d.error || "AI build request failed");
+      }
+
+      const code = d.content || "";
+
+      setGeneratedCode(code);
+
+      setMessages(m => [
+        ...m,
+        {
+          role: "agent",
+          text:
+            "✓ Qwen generated the requested React application. Generated code is shown in the editor."
+        }
+      ]);
+
+      setTerminal(t => [
+        ...t,
+        "✓ AI CODE GENERATED",
+        `✓ Model: ${d.model}`,
+        "✓ Generation complete",
+        "ℹ Code has NOT overwritten the App Builder."
+      ]);
+    } catch (e) {
+      setMessages(m => [
+        ...m,
+        {
+          role: "agent",
+          text: `Build error: ${e.message}`
+        }
+      ]);
+
+      setTerminal(t => [
+        ...t,
+        `✗ BUILD ERROR: ${e.message}`
+      ]);
+    }
+
+    setBusy(false);
+  };
+
+  return (
+    <div className="app">
+      <header className="topbar">
+        <div className="brand">
+          <Sparkles size={20} />
+          <span>SimeonJr App Builder</span>
+          <b>LOCAL</b>
+        </div>
+
+        <div className="actions">
+          <button
+            className="build"
+            onClick={buildProject}
+            disabled={busy || !aiOnline}
+          >
+            {busy ? (
+              <Loader2 className="spin" size={16} />
+            ) : (
+              <Play size={16} />
+            )}
+
+            {busy ? "BUILDING..." : "BUILD"}
+          </button>
+
+          <button className="settings">
+            <Settings size={17} />
+          </button>
+        </div>
+      </header>
+
+      <main className="workspace">
+
+        <aside className="explorer">
+          <div className="title">
+            <Folder size={15} /> EXPLORER
+          </div>
+
+          <div className={online ? "connection online" : "connection offline"}>
+            {online ? (
+              <CheckCircle2 size={14} />
+            ) : (
+              <AlertCircle size={14} />
+            )}
+
+            {online ? "Agent connected" : "Agent offline"}
+          </div>
+
+          <div className="tree">
+            <div className="item folder">
+              <ChevronDown size={14} />
+              <Folder size={15} />
+              src
+            </div>
+
+            {files.length ? (
+              files.slice(0, 100).map(file => (
+                <div className="item child" key={file}>
+                  <FileCode2 size={14} />
+                  {file}
+                </div>
+              ))
+            ) : (
+              <>
+                <div className="item child">
+                  <FileCode2 size={14} />
+                  App.jsx
+                </div>
+
+                <div className="item child">
+                  <FileCode2 size={14} />
+                  App.css
+                </div>
+
+                <div className="item child">
+                  <FileCode2 size={14} />
+                  main.jsx
+                </div>
+              </>
+            )}
+          </div>
+        </aside>
+
+        <section className="editor-area">
+          <div className="editor-title">
+            <FileCode2 size={15} /> Generated App.jsx
+          </div>
+
+          <div className="editor">
+            {generatedCode ? (
+              generatedCode
+                .split(/\r?\n/)
+                .slice(0, 120)
+                .map((line, i) => (
+                  <div key={i}>
+                    <span>{i + 1}</span>{" "}
+                    {line || " "}
+                  </div>
+                ))
+            ) : (
+              <>
+                <div>
+                  <span>1</span> // SimeonJr AI generated code
+                </div>
+                <div>
+                  <span>2</span> //
+                </div>
+                <div>
+                  <span>3</span> // Enter an app request and press BUILD.
+                </div>
+                <div>
+                  <span>4</span> //
+                </div>
+                <div>
+                  <span>5</span> // Qwen2.5-Coder is running locally.
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="terminal">
+            <div className="terminal-title">
+              <Terminal size={15} /> TERMINAL
+            </div>
+
+            <div className="terminal-content">
+              {terminal.slice(-30).map((line, i) => (
+                <div
+                  key={i}
+                  className={
+                    line.includes("SUCCESS") ||
+                    line.includes("✓")
+                      ? "success"
+                      : line.includes("FAILED") ||
+                        line.includes("✗")
+                        ? "error"
+                        : ""
+                  }
+                >
+                  {line}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <aside className="agent">
+          <div className="title">
+            <Bot size={18} />
+            AI AGENT
+
+            <small className={aiOnline ? "online" : "offline"}>
+              {aiOnline ? "ONLINE" : "OFFLINE"}
+            </small>
+          </div>
+
+          <div className="agent-content">
+            <div className="message">
+              <Bot size={18} />
+
+              <div>
+                <strong>SimeonJr Agent</strong>
+
+                <p>
+                  {aiOnline
+                    ? "Connected to local Qwen through LM Studio."
+                    : "LM Studio AI is offline."}
+                </p>
+              </div>
+            </div>
+
+            <div className="activity">
+              <strong>AGENT ACTIVITY</strong>
+
+              <div>✓ Workspace initialized</div>
+
+              <div>
+                {online
+                  ? "✓ Backend connected"
+                  : "○ Backend offline"}
+              </div>
+
+              <div>
+                {aiOnline
+                  ? "✓ Local Qwen connected"
+                  : "○ Local Qwen offline"}
+              </div>
+
+              {messages.slice(-8).map((m, i) => (
+                <div key={i}>
+                  {m.role === "user" ? "→ " : "✓ "}
+                  {m.text}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="prompt">
+            <textarea
+              value={prompt}
+              onChange={e => setPrompt(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  sendPrompt();
+                }
+              }}
+              placeholder="Describe the app you want to build..."
+            />
+
+            <button
+              onClick={sendPrompt}
+              disabled={!aiOnline || busy}
+            >
+              {busy ? (
+                <Loader2 className="spin" size={16} />
+              ) : (
+                <Send size={16} />
+              )}
+
+              SEND
+            </button>
+          </div>
+        </aside>
+
+        <aside className="preview">
+          <div className="title">LIVE PREVIEW</div>
+
+          <div className="preview-box">
+            <Sparkles size={32} />
+
+            <h2>
+              {generatedCode
+                ? "AI Generated App"
+                : "Your App Preview"}
+            </h2>
+
+            <p>
+              {generatedCode
+                ? "Qwen has generated your React application."
+                : "Generated applications will appear here."}
+            </p>
+          </div>
+        </aside>
+
+      </main>
+    </div>
+  );
+}

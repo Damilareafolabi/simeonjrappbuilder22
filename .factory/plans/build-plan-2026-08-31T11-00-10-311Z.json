@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "factory": "SimeonJr Universal App Factory",
+  "createdAt": "2026-08-31T11:00:10.310Z",
+  "prompt": "Build a production-ready offline business management application with a professional responsive interface",
+  "classification": {
+    "applicationMode": "single-app",
+    "saas": false,
+    "desktop": false,
+    "mobile": false,
+    "hosted": false,
+    "localFirst": true,
+    "apiKeysRequiredForCore": false,
+    "promptDriven": true
+  },
+  "rules": {
+    "promptIsSourceOfTruth": true,
+    "doNotHardcodeApplicationTypes": true,
+    "localFirst": true,
+    "coreRequiresNoApiKeys": true,
+    "productionVerificationRequired": true
+  },
+  "pipeline": [
+    "ARCHITECT",
+    "PLAN",
+    "GENERATE",
+    "BUILD",
+    "TEST",
+    "REPAIR",
+    "REBUILD",
+    "VERIFY",
+    "CHECKPOINT",
+    "PACKAGE",
+    "RUN_OR_DEPLOY"
+  ]
+}

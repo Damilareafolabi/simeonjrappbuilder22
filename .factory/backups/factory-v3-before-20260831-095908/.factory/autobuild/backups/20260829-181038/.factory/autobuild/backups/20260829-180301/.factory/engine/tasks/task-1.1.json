@@ -1,0 +1,22 @@
+﻿{
+    "id":  "1.1",
+    "phase":  1,
+    "name":  "Autonomous Task Model",
+    "description":  "Persistent model representing an executable factory task.",
+    "status":  "passed",
+    "priority":  1,
+    "dependencies":  [
+                         "0.8"
+                     ],
+    "attempt":  1,
+    "maxAttempts":  3,
+    "startedAt":  "2026-08-29T17:25:11.2807309+01:00",
+    "completedAt":  "2026-08-29T17:25:13.5289893+01:00",
+    "build":  "passed",
+    "tests":  "passed",
+    "verification":  "passed",
+    "result":  "PASS",
+    "error":  null,
+    "checkpoint":  null,
+    "backup":  ".factory\\backups\\module-1.1-20260829-172511"
+}

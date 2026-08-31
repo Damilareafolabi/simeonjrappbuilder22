@@ -1,0 +1,132 @@
+﻿{
+    "framework":  "react",
+    "analyzedFileCount":  56,
+    "executeMode":  false,
+    "projectPath":  "C:\\Users\\LUMEN GLOB AL\\Desktop\\SimeonJrAppBuilder",
+    "generatedAt":  "2026-08-29T17:48:13.2593786+01:00",
+    "taskId":  "2.4",
+    "files":  [
+                  {
+                      "path":  "backend\\server.js",
+                      "extension":  ".js",
+                      "size":  15579,
+                      "approved":  false
+                  },
+                  {
+                      "path":  "generated\\index.html",
+                      "extension":  ".html",
+                      "size":  334,
+                      "approved":  false
+                  },
+                  {
+                      "path":  "generated\\src\\App.css",
+                      "extension":  ".css",
+                      "size":  934,
+                      "approved":  false
+                  },
+                  {
+                      "path":  "generated\\src\\App.jsx",
+                      "extension":  ".jsx",
+                      "size":  1296,
+                      "approved":  false
+                  },
+                  {
+                      "path":  "generated\\src\\main.jsx",
+                      "extension":  ".jsx",
+                      "size":  182,
+                      "approved":  false
+                  },
+                  {
+                      "path":  "index.html",
+                      "extension":  ".html",
+                      "size":  370,
+                      "approved":  false
+                  },
+                  {
+                      "path":  "projects\\counter-pro\\index.html",
+                      "extension":  ".html",
+                      "size":  326,
+                      "approved":  false
+                  },
+                  {
+                      "path":  "projects\\counter-pro\\src\\App.css",
+                      "extension":  ".css",
+                      "size":  736,
+                      "approved":  false
+                  },
+                  {
+                      "path":  "projects\\counter-pro\\src\\App.jsx",
+                      "extension":  ".jsx",
+                      "size":  618,
+                      "approved":  false
+                  },
+                  {
+                      "path":  "projects\\counter-pro\\src\\main.jsx",
+                      "extension":  ".jsx",
+                      "size":  182,
+                      "approved":  false
+                  },
+                  {
+                      "path":  "src\\App.css",
+                      "extension":  ".css",
+                      "size":  12339,
+                      "approved":  false
+                  },
+                  {
+                      "path":  "src\\App.jsx",
+                      "extension":  ".jsx",
+                      "size":  17342,
+                      "approved":  false
+                  },
+                  {
+                      "path":  "src\\index.css",
+                      "extension":  ".css",
+                      "size":  2169,
+                      "approved":  false
+                  },
+                  {
+                      "path":  "src\\main.jsx",
+                      "extension":  ".jsx",
+                      "size":  229,
+                      "approved":  false
+                  },
+                  {
+                      "path":  "src-before-v2\\App.css",
+                      "extension":  ".css",
+                      "size":  6511,
+                      "approved":  false
+                  },
+                  {
+                      "path":  "src-before-v2\\App.jsx",
+                      "extension":  ".jsx",
+                      "size":  6878,
+                      "approved":  false
+                  },
+                  {
+                      "path":  "src-before-v2\\index.css",
+                      "extension":  ".css",
+                      "size":  2169,
+                      "approved":  false
+                  },
+                  {
+                      "path":  "src-before-v2\\main.jsx",
+                      "extension":  ".jsx",
+                      "size":  229,
+                      "approved":  false
+                  },
+                  {
+                      "path":  "vite.config.js",
+                      "extension":  ".js",
+                      "size":  161,
+                      "approved":  false
+                  }
+              ],
+    "transformationPolicy":  {
+                                 "rollbackOnFailure":  true,
+                                 "preserveExisting":  true,
+                                 "backupBeforeModification":  true,
+                                 "noRebuildFromScratch":  true,
+                                 "buildAfterModification":  true
+                             },
+    "sourceFileCount":  19
+}

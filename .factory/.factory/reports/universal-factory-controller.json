@@ -1,0 +1,20 @@
+{
+  "generatedAt": "2026-08-31T10:49:49.450Z",
+  "controller": "C:\\Users\\LUMEN GLOB AL\\Desktop\\SimeonJrAppBuilder\\.factory\\.factory\\engine\\universal-factory-controller.cjs",
+  "capabilities": [
+    "prompt-driven architecture",
+    "single-app detection",
+    "multi-app detection",
+    "dynamic SaaS detection",
+    "offline-first architecture",
+    "desktop packaging readiness",
+    "mobile packaging readiness",
+    "hosted deployment readiness",
+    "production build pipeline",
+    "automatic repair pipeline",
+    "verification gate",
+    "checkpoint integration",
+    "project isolation",
+    "package/run/deploy pipeline"
+  ]
+}

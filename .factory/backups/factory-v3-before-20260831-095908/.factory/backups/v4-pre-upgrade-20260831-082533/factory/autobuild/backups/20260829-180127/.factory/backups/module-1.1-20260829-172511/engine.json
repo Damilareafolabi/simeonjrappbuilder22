@@ -1,0 +1,23 @@
+﻿{
+    "engine":  "SimeonJr Autonomous Task Engine",
+    "version":  "1.0",
+    "mode":  "SAFE_AUTONOMOUS",
+    "enabled":  true,
+    "rules":  {
+                  "backupBeforeTask":  true,
+                  "buildBeforePass":  true,
+                  "testBeforePass":  true,
+                  "verifyBeforePass":  true,
+                  "checkpointBeforeTask":  true,
+                  "stopOnFailure":  true,
+                  "rollbackOnFailure":  true,
+                  "neverSkipVerification":  true,
+                  "neverMarkUnverifiedPass":  true
+              },
+    "execution":  {
+                      "currentTask":  "1.1",
+                      "running":  false,
+                      "attempt":  0,
+                      "maxRepairAttempts":  3
+                  }
+}

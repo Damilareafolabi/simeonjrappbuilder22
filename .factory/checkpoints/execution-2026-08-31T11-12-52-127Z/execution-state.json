@@ -1,0 +1,57 @@
+{
+  "executionId": "execution-2026-08-31T11-12-52-127Z",
+  "createdAt": "2026-08-31T11:12:52.127Z",
+  "prompt": "Build a production-ready offline business management application with a professional responsive interface",
+  "classification": {
+    "applicationMode": "single-app",
+    "saas": false,
+    "desktop": false,
+    "mobile": false,
+    "hosted": false,
+    "localFirst": true,
+    "apiKeysRequiredForCore": false,
+    "promptDriven": true
+  },
+  "stages": [
+    {
+      "name": "ARCHITECT",
+      "status": "READY"
+    },
+    {
+      "name": "PLAN",
+      "status": "COMPLETE"
+    },
+    {
+      "name": "GENERATE",
+      "status": "READY"
+    },
+    {
+      "name": "BUILD",
+      "status": "PENDING"
+    },
+    {
+      "name": "TEST",
+      "status": "PENDING"
+    },
+    {
+      "name": "REPAIR",
+      "status": "PENDING"
+    },
+    {
+      "name": "REBUILD",
+      "status": "PENDING"
+    },
+    {
+      "name": "VERIFY",
+      "status": "PENDING"
+    },
+    {
+      "name": "CHECKPOINT",
+      "status": "READY"
+    },
+    {
+      "name": "PACKAGE",
+      "status": "PENDING"
+    }
+  ]
+}

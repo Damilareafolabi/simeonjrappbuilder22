@@ -1,0 +1,10 @@
+﻿node_modules/
+dist/
+generated/node_modules/
+.factory/backups/
+.factory/autobuild/backups/
+**/node_modules/
+**/backups/
+*.log
+.env
+.env.*

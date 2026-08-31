@@ -1,0 +1,33 @@
+{
+    "analyzedAt":  "2026-08-29T17:38:24.3839757+01:00",
+    "projectPath":  "C:\\Users\\LUMEN GLOB AL\\Desktop\\SimeonJrAppBuilder",
+    "fileCount":  56,
+    "framework":  "react",
+    "hasPackageJson":  true,
+    "hasViteConfig":  true,
+    "hasSrcDirectory":  true,
+    "hasBackendDirectory":  true,
+    "extensions":  {
+                       ".gitignore":  1,
+                       ".before-preview-route-fix":  1,
+                       ".json":  9,
+                       ".png":  2,
+                       ".js":  2,
+                       ".backup":  5,
+                       ".jsx":  8,
+                       ".css":  6,
+                       ".ps1":  1,
+                       ".before-preview-route":  1,
+                       ".before-preview-ui":  1,
+                       ".before-live-ui-final":  2,
+                       ".before-white-prompt":  1,
+                       ".before-repair":  1,
+                       ".md":  1,
+                       ".before-live-preview":  3,
+                       ".backup-20260829-170029":  2,
+                       ".html":  3,
+                       ".svg":  6
+                   },
+    "analysisVersion":  "1.0"
+}
+

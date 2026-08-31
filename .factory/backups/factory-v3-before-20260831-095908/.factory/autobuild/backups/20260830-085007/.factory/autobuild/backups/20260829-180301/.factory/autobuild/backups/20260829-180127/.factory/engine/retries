@@ -1,0 +1,13 @@
+﻿{
+    "module":  "1.5",
+    "status":  "verified",
+    "attempt":  1,
+    "maxAttempts":  3,
+    "failures":  [
+                     "SIMULATED_TEST_FAILURE"
+                 ],
+    "repairs":  [
+                    "SIMULATED_REPAIR"
+                ],
+    "lastResult":  "REPAIRED"
+}

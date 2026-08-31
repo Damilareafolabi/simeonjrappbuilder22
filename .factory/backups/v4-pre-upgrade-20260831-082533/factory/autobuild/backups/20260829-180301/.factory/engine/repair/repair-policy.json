@@ -1,0 +1,15 @@
+﻿{
+  "module": "1.5",
+  "name": "Retry and Repair Loop",
+  "version": "1.0",
+  "maxAttempts": 3,
+  "rules": {
+    "checkpointBeforeRetry": true,
+    "recordFailure": true,
+    "retryOnlyAfterFailure": true,
+    "verifyAfterRepair": true,
+    "stopAfterMaxAttempts": true,
+    "neverPassFailedTask": true,
+    "rollbackOnUnrecoverableFailure": true
+  }
+}

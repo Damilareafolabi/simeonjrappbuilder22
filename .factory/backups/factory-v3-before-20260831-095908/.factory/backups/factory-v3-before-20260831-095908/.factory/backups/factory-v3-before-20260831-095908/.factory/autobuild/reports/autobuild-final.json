@@ -1,0 +1,28 @@
+﻿{
+    "verification":  "PASSED",
+    "specialRoots":  [
+                         "generated",
+                         "projects"
+                     ],
+    "timestamp":  "2026-08-31T08:30:00.7814180+01:00",
+    "rollbackOnFailure":  true,
+    "progress":  100,
+    "backup":  "C:\\Users\\LUMEN GLOB AL\\Desktop\\SimeonJrAppBuilder\\.factory\\autobuild\\backups\\20260831-082940",
+    "protectedFileCount":  47331,
+    "build":  "PASSED",
+    "status":  "PASSED",
+    "activeFileCount":  798,
+    "phase":  "2.4",
+    "protectedRoots":  [
+                           ".factory",
+                           "node_modules",
+                           "dist",
+                           "src-before-v2"
+                       ],
+    "activeRoots":  [
+                        "src",
+                        "backend",
+                        "vite.config.js",
+                        "index.html"
+                    ]
+}

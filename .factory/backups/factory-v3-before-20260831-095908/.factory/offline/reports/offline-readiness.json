@@ -1,0 +1,16 @@
+﻿{
+    "generated":  "2026-08-29T19:10:41.4394276+01:00",
+    "node":  "v24.19.0",
+    "npm":  "11.17.0",
+    "packageLock":  true,
+    "nodeModules":  true,
+    "npmCache":  "C:\\Users\\LUMEN GLOB AL\\Desktop\\SimeonJrAppBuilder\\.factory\\offline\\npm-cache",
+    "pythonRequirements":  {
+
+                           },
+    "localAI":  "LM Studio",
+    "workingModel":  "qwen2.5-coder-1.5b-instruct",
+    "knownUnavailableModel":  "qwen/qwen2.5-coder-14b",
+    "contextBlocker":  true,
+    "autoResume":  "PENDING"
+}

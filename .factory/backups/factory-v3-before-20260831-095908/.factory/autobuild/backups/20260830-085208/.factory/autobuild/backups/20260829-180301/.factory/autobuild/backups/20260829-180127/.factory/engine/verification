@@ -1,0 +1,12 @@
+﻿{
+    "module":  "1.4",
+    "status":  "passed",
+    "checks":  {
+                   "build":  true,
+                   "tests":  true,
+                   "output":  true,
+                   "state":  true,
+                   "failureGate":  true
+               },
+    "result":  "PASS"
+}

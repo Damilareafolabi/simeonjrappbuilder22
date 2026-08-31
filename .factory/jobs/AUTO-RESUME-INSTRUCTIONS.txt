@@ -1,0 +1,22 @@
+﻿SIMEONJR FACTORY — AUTO RESUME
+
+On next launch:
+
+1. Read .factory/jobs/state/factory-state.json
+2. Read .factory/jobs/state/real-project-001.checkpoint.json
+3. Verify the target still exists.
+4. Verify LM Studio is available.
+5. Verify qwen2.5-coder-1.5b-instruct is available.
+6. NEVER restart completed batches.
+7. Continue from nextBatch.
+8. Enforce maximum prompt budget of 2600 tokens.
+9. Never send a request exceeding the model context.
+10. Save checkpoint after every successful batch.
+11. Backup before applying modifications.
+12. Build after transformation.
+13. Roll back automatically if build fails.
+14. Save final result.
+15. Mark job COMPLETE only after verification passes.
+
+The machine may be offline.
+Do not require Internet for an already-installed dependency or local AI model.

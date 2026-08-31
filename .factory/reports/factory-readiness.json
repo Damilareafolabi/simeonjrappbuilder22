@@ -1,0 +1,18 @@
+﻿{
+    "factory":  "SimeonJr App Builder",
+    "phase":  "2.4B",
+    "generatedAt":  "2026-08-29T18:36:40.2202490+01:00",
+    "nextGate":  "3.0",
+    "capabilities":  {
+                         "automaticRollback":  true,
+                         "existingProjectTransform":  true,
+                         "projectIsolation":  true,
+                         "productionBuildVerification":  true,
+                         "aiRepair":  true,
+                         "automaticBackup":  true,
+                         "localAI":  true,
+                         "folderImport":  true,
+                         "protectedRoots":  true,
+                         "browserImport":  true
+                     }
+}

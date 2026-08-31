@@ -1,0 +1,22 @@
+﻿{
+    "id":  "1.2",
+    "phase":  1,
+    "error":  null,
+    "description":  "Selects the next executable task using status, priority and dependencies.",
+    "priority":  2,
+    "dependencies":  [
+                         "1.1"
+                     ],
+    "maxAttempts":  3,
+    "tests":  "pending",
+    "checkpoint":  null,
+    "attempt":  1,
+    "verification":  "pending",
+    "backup":  ".factory\\backups\\module-1.2-20260829-172600",
+    "startedAt":  "2026-08-29T17:26:00.1312287+01:00",
+    "name":  "Task Planner",
+    "build":  "pending",
+    "status":  "testing",
+    "result":  null,
+    "completedAt":  null
+}

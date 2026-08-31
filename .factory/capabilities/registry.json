@@ -1,0 +1,11 @@
+﻿{
+  "version": "3.0.0",
+  "capabilities": [
+    "authentication","authorization","database","crud","api",
+    "realtime","websockets","file-storage","search","notifications",
+    "analytics","charts","payments","subscriptions","multi-tenancy",
+    "admin","audit-logs","ai","documents","forms","workflow",
+    "automation","reporting","responsive-ui","pwa","testing",
+    "production-build","auto-repair"
+  ]
+}

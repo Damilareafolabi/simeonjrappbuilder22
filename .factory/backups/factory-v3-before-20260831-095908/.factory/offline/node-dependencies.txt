@@ -1,0 +1,12 @@
+﻿simeonjrappbuilder@0.0.0 C:\Users\LUMEN GLOB AL\Desktop\SimeonJrAppBuilder
++-- @types/react-dom@19.2.5
++-- @types/react@19.2.18
++-- @vitejs/plugin-react@6.1.1
++-- cors@2.8.6
++-- express@5.2.1
++-- lucide-react@1.37.0
++-- oxlint@1.80.0
++-- react-dom@19.2.8
++-- react@19.2.8
+`-- vite@8.2.2
+

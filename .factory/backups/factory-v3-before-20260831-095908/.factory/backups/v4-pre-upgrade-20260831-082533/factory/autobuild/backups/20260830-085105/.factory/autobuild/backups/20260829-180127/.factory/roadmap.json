@@ -1,0 +1,145 @@
+﻿{
+  "project": "SimeonJr App Factory",
+  "version": "1.0",
+  "progress": 0,
+  "policy": {
+    "backupBeforeModule": true,
+    "buildBeforePass": true,
+    "testBeforePass": true,
+    "stopOnFailure": true,
+    "rollbackOnFailure": true,
+    "neverSkipVerification": true
+  },
+  "phases": [
+    {
+      "id": 0,
+      "name": "Safety & Control",
+      "status": "in_progress",
+      "modules": [
+        {"id":"0.1","name":"Factory control system","status":"pending"},
+        {"id":"0.2","name":"Roadmap persistence","status":"pending"},
+        {"id":"0.3","name":"Checkpoint system","status":"pending"},
+        {"id":"0.4","name":"Build verification","status":"pending"},
+        {"id":"0.5","name":"Test runner","status":"pending"},
+        {"id":"0.6","name":"Pass/fail recording","status":"pending"},
+        {"id":"0.7","name":"Stop-on-failure","status":"pending"},
+        {"id":"0.8","name":"Rollback protection","status":"pending"}
+      ]
+    },
+    {
+      "id": 1,
+      "name": "Autonomous Task Engine",
+      "status": "pending",
+      "modules": [
+        {"id":"1.1","name":"Task model","status":"pending"},
+        {"id":"1.2","name":"Task planner","status":"pending"},
+        {"id":"1.3","name":"Task runner","status":"pending"},
+        {"id":"1.4","name":"Verification gate","status":"pending"},
+        {"id":"1.5","name":"Retry and repair loop","status":"pending"},
+        {"id":"1.6","name":"Task persistence","status":"pending"},
+        {"id":"1.7","name":"Dynamic task discovery","status":"pending"}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Build & Transform Modes",
+      "status": "pending",
+      "modules": [
+        {"id":"2.1","name":"Build From Scratch","status":"pending"},
+        {"id":"2.2","name":"Project import","status":"pending"},
+        {"id":"2.3","name":"Existing project analysis","status":"pending"},
+        {"id":"2.4","name":"Transform Existing","status":"pending"},
+        {"id":"2.5","name":"Transformation verification","status":"pending"}
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Design Mode",
+      "status": "pending",
+      "modules": [
+        {"id":"3.1","name":"UI/UX planning","status":"pending"},
+        {"id":"3.2","name":"Screen planning","status":"pending"},
+        {"id":"3.3","name":"User flows","status":"pending"},
+        {"id":"3.4","name":"Flowcharts","status":"pending"},
+        {"id":"3.5","name":"Architecture planning","status":"pending"},
+        {"id":"3.6","name":"Design to build handoff","status":"pending"}
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Advanced Application Engine",
+      "status": "pending",
+      "modules": [
+        {"id":"4.1","name":"Multi-page applications","status":"pending"},
+        {"id":"4.2","name":"Backend generation","status":"pending"},
+        {"id":"4.3","name":"Python support","status":"pending"},
+        {"id":"4.4","name":"Node support","status":"pending"},
+        {"id":"4.5","name":"Database support","status":"pending"},
+        {"id":"4.6","name":"API generation","status":"pending"},
+        {"id":"4.7","name":"Dependency management","status":"pending"},
+        {"id":"4.8","name":"Automated testing","status":"pending"},
+        {"id":"4.9","name":"Error repair","status":"pending"}
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Digital Suite Engine",
+      "status": "pending",
+      "modules": [
+        {"id":"5.1","name":"Multiple applications per project","status":"pending"},
+        {"id":"5.2","name":"Shared services","status":"pending"},
+        {"id":"5.3","name":"Shared authentication","status":"pending"},
+        {"id":"5.4","name":"Shared database","status":"pending"},
+        {"id":"5.5","name":"App-to-app communication","status":"pending"},
+        {"id":"5.6","name":"Suite-level task planning","status":"pending"},
+        {"id":"5.7","name":"Suite production build","status":"pending"}
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Personal Local Factory",
+      "status": "pending",
+      "modules": [
+        {"id":"6.1","name":"Persistent workspace","status":"pending"},
+        {"id":"6.2","name":"Automatic backups","status":"pending"},
+        {"id":"6.3","name":"Windows auto-start","status":"pending"},
+        {"id":"6.4","name":"Local AI","status":"pending"},
+        {"id":"6.5","name":"Project history","status":"pending"},
+        {"id":"6.6","name":"Export","status":"pending"},
+        {"id":"6.7","name":"Recovery","status":"pending"}
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Commercial Architecture",
+      "status": "pending",
+      "modules": [
+        {"id":"7.1","name":"Authentication","status":"pending"},
+        {"id":"7.2","name":"Private user workspaces","status":"pending"},
+        {"id":"7.3","name":"Multi-tenancy","status":"pending"},
+        {"id":"7.4","name":"Billing","status":"pending"},
+        {"id":"7.5","name":"Pricing","status":"pending"},
+        {"id":"7.6","name":"Admin controls","status":"pending"},
+        {"id":"7.7","name":"Configurable branding","status":"pending"},
+        {"id":"7.8","name":"Production deployment","status":"pending"}
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Final QA & Release",
+      "status": "pending",
+      "modules": [
+        {"id":"8.1","name":"Scratch app test","status":"pending"},
+        {"id":"8.2","name":"Transform app test","status":"pending"},
+        {"id":"8.3","name":"Python app test","status":"pending"},
+        {"id":"8.4","name":"Database app test","status":"pending"},
+        {"id":"8.5","name":"Digital suite test","status":"pending"},
+        {"id":"8.6","name":"Large project test","status":"pending"},
+        {"id":"8.7","name":"Failure recovery test","status":"pending"},
+        {"id":"8.8","name":"Fresh installation test","status":"pending"},
+        {"id":"8.9","name":"Production export test","status":"pending"},
+        {"id":"8.10","name":"100% final verification","status":"pending"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+﻿{
+    "version":  "3.0",
+    "model":  "qwen2.5-coder-1.5b-instruct",
+    "backupBeforeEdit":  true,
+    "allowedOperations":  [
+                              "read",
+                              "inspect",
+                              "create",
+                              "edit",
+                              "delete-generated",
+                              "mkdir",
+                              "npm-install",
+                              "npm-build",
+                              "npm-test",
+                              "git-status",
+                              "git-diff"
+                          ],
+    "autonomous":  true,
+    "approvalRequired":  [
+                             "git-push",
+                             "publish",
+                             "deploy",
+                             "external-message",
+                             "bulk-outreach",
+                             "destructive-project-delete"
+                         ],
+    "rollbackOnFailure":  true,
+    "maxIterations":  20,
+    "buildAfterEdit":  true,
+    "workspace":  "C:\\Users\\LUMEN GLOB AL\\Desktop\\SimeonJrAppBuilder",
+    "repairOnFailure":  true,
+    "endpoint":  "http://127.0.0.1:1234/v1",
+    "protectedPaths":  [
+                           ".factory",
+                           "node_modules",
+                           "dist",
+                           ".git"
+                       ]
+}

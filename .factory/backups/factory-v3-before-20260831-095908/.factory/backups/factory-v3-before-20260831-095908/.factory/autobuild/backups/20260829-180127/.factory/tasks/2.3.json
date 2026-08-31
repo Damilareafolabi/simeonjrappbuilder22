@@ -1,0 +1,27 @@
+﻿{
+  "id": "2.3",
+  "name": "Existing Project Analysis",
+  "status": "implemented",
+  "type": "analysis-engine",
+  "description": "Analyze an imported project and produce a persistent structural summary before transformation.",
+  "requirements": [
+    "Detect project files",
+    "Identify common project types",
+    "Identify package manifests",
+    "Identify source directories",
+    "Identify configuration files",
+    "Count files",
+    "Create persistent analysis result",
+    "Preserve imported project",
+    "Do not modify imported files during analysis",
+    "Never mark PASS without verification"
+  ],
+  "output": ".factory\\state\\project-analysis.json",
+  "verification": {
+    "requiresBuild": true,
+    "requiresTests": true,
+    "requiresExpectedOutput": true,
+    "requiresStateConsistency": true,
+    "requiresNonDestructiveAnalysis": true
+  }
+}

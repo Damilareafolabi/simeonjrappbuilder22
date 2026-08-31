@@ -1,0 +1,16 @@
+﻿{
+  "runner": "APMAZON Master Autonomous Checklist",
+  "version": "1.0",
+  "mode": "SAFE_AUTONOMOUS",
+  "rules": {
+    "backupBeforeModule": true,
+    "buildBeforePass": true,
+    "testBeforePass": true,
+    "verifyBeforePass": true,
+    "stopOnFailure": true,
+    "rollbackOnFailure": true,
+    "neverFakePass": true,
+    "neverSkipVerification": true,
+    "maxRepairAttempts": 3
+  }
+}

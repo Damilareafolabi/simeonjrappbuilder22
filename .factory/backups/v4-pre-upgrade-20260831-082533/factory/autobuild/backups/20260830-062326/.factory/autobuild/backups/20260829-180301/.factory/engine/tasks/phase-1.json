@@ -1,0 +1,93 @@
+﻿[
+  {
+    "id": "1.1",
+    "phase": 1,
+    "name": "Autonomous Task Model",
+    "status": "pending",
+    "priority": 1,
+    "dependencies": ["0.8"],
+    "verification": [
+      "task schema exists",
+      "task status can persist",
+      "pass/fail state is recorded"
+    ]
+  },
+  {
+    "id": "1.2",
+    "phase": 1,
+    "name": "Task Planner",
+    "status": "pending",
+    "priority": 2,
+    "dependencies": ["1.1"],
+    "verification": [
+      "planner selects next pending task",
+      "dependencies are respected",
+      "completed tasks are skipped"
+    ]
+  },
+  {
+    "id": "1.3",
+    "phase": 1,
+    "name": "Task Runner",
+    "status": "pending",
+    "priority": 3,
+    "dependencies": ["1.2"],
+    "verification": [
+      "runner executes selected task",
+      "execution state persists",
+      "runner stops on failure"
+    ]
+  },
+  {
+    "id": "1.4",
+    "phase": 1,
+    "name": "Verification Gate",
+    "status": "pending",
+    "priority": 4,
+    "dependencies": ["1.3"],
+    "verification": [
+      "build required",
+      "tests required",
+      "verification required before PASS"
+    ]
+  },
+  {
+    "id": "1.5",
+    "phase": 1,
+    "name": "Retry and Repair Loop",
+    "status": "pending",
+    "priority": 5,
+    "dependencies": ["1.4"],
+    "verification": [
+      "failed tasks can be retried",
+      "repair attempts are limited",
+      "persistent failure stops execution"
+    ]
+  },
+  {
+    "id": "1.6",
+    "phase": 1,
+    "name": "Task Persistence",
+    "status": "pending",
+    "priority": 6,
+    "dependencies": ["1.5"],
+    "verification": [
+      "task state survives restart",
+      "completed tasks remain completed",
+      "failed tasks remain failed"
+    ]
+  },
+  {
+    "id": "1.7",
+    "phase": 1,
+    "name": "Dynamic Task Discovery",
+    "status": "pending",
+    "priority": 7,
+    "dependencies": ["1.6"],
+    "verification": [
+      "new tasks can be added",
+      "dependencies are recalculated",
+      "next safe task is selected automatically"
+    ]
+  }
+]

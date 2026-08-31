@@ -1,0 +1,24 @@
+﻿{
+  "id": "2.2",
+  "name": "Project Import",
+  "status": "implemented",
+  "type": "factory-engine",
+  "description": "Accept an existing project through file selection or drag-and-drop and preserve its files for analysis and transformation.",
+  "requirements": [
+    "Accept multiple project files",
+    "Accept drag-and-drop files",
+    "Accept file selection",
+    "Preserve imported file metadata",
+    "Display imported file count",
+    "Prevent transformation without an imported project",
+    "Preserve existing project files",
+    "Prepare imported project for analysis",
+    "Never mark PASS without verification"
+  ],
+  "verification": {
+    "requiresBuild": true,
+    "requiresTests": true,
+    "requiresExpectedOutput": true,
+    "requiresStateConsistency": true
+  }
+}
